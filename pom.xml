@@ -1,0 +1,96 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.education</groupId>
+    <artifactId>education-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <relativePath>../education-parent/pom.xml</relativePath>
+  </parent>
+
+  <groupId>com.weight</groupId>
+  <artifactId>weight-manage</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>weight-manage</name>
+
+  <modules>
+    <module>Weight-adapter</module>
+    <module>Weight-app</module>
+    <module>Weight-client</module>
+    <module>Weight-domain</module>
+    <module>Weight-infrastructure</module>
+    <module>Weight-start</module>
+  </modules>
+
+  <properties>
+    <common-tools.version>1.0-SNAPSHOT</common-tools.version>
+    <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
+    <spring.boot.version>2.3.2.RELEASE</spring.boot.version>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <!--Project modules-->
+      <dependency>
+        <groupId>com.weight</groupId>
+        <artifactId>Weight-adapter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.weight</groupId>
+        <artifactId>Weight-app</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.weight</groupId>
+        <artifactId>Weight-client</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.weight</groupId>
+        <artifactId>Weight-domain</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.weight</groupId>
+        <artifactId>Weight-infrastructure</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <!--Project modules End-->
+
+      <!--common-tools Start-->
+      <dependency>
+        <groupId>com.common</groupId>
+        <artifactId>common-tools-spring</artifactId>
+        <version>${common-tools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.common</groupId>
+        <artifactId>common-tools-core</artifactId>
+        <version>${common-tools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.common</groupId>
+        <artifactId>common-tools-mybatis</artifactId>
+        <version>${common-tools.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.common</groupId>
+        <artifactId>common-tools-redis</artifactId>
+        <version>${common-tools.version}</version>
+      </dependency>
+      <!--common-tools End-->
+
+      <!--javax.annotation Start-->
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>javax.annotation-api</artifactId>
+        <version>${javax.annotation-api.version}</version>
+      </dependency>
+      <!--javax.annotation End-->
+    </dependencies>
+  </dependencyManagement>
+
+</project>
