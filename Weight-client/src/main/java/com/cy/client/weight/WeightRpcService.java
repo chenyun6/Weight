@@ -1,7 +1,9 @@
 package com.cy.client.weight;
 
 import com.common.tools.core.dto.ResultDTO;
+import com.cy.client.weight.dto.LoginResponseDTO;
 import com.cy.client.weight.query.LoginDTO;
+import com.cy.client.weight.query.RefreshTokenDTO;
 import com.cy.client.weight.query.SendCodeDTO;
 import com.cy.client.weight.query.WeightRecordCreateDTO;
 import io.swagger.annotations.Api;
@@ -28,7 +30,15 @@ public interface WeightRpcService {
 
     @ApiOperation("登录")
     @PostMapping("/login")
-    ResultDTO<Long> login(@RequestBody @Valid LoginDTO dto);
+    ResultDTO<LoginResponseDTO> login(@RequestBody @Valid LoginDTO dto);
+
+    @ApiOperation("刷新Token")
+    @PostMapping("/refresh-token")
+    ResultDTO<LoginResponseDTO> refreshToken(@RequestBody @Valid RefreshTokenDTO dto);
+
+    @ApiOperation("检查今天是否已记录")
+    @PostMapping("/check-today-record")
+    ResultDTO<Boolean> checkTodayRecord(@RequestBody @Valid com.cy.client.weight.query.CheckTodayRecordDTO dto);
 
     @ApiOperation("创建体重记录")
     @PostMapping("/create-record")

@@ -41,16 +41,40 @@ public class WeightWebController {
 
     @ApiOperation("登录")
     @PostMapping("/login")
-    public ResultDTO<Long> login(@RequestBody @Valid LoginDTO dto, HttpServletRequest request) {
+    public ResultDTO<com.cy.client.weight.dto.LoginResponseDTO> login(@RequestBody @Valid LoginDTO dto, HttpServletRequest request) {
         // 获取客户端IP
         String ip = getClientIp(request);
         dto.setIp(ip);
         return weightRpcService.login(dto);
     }
 
+    @ApiOperation("刷新Token")
+    @PostMapping("/refresh-token")
+    public ResultDTO<com.cy.client.weight.dto.LoginResponseDTO> refreshToken(@RequestBody @Valid com.cy.client.weight.query.RefreshTokenDTO dto) {
+        return weightRpcService.refreshToken(dto);
+    }
+
+    @ApiOperation("检查今天是否已记录")
+    @PostMapping("/check-today-record")
+    public ResultDTO<Boolean> checkTodayRecord(HttpServletRequest request) {
+        // 从拦截器设置的属性中获取userId
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId == null) {
+            return ResultDTO.success(false);
+        }
+        com.cy.client.weight.query.CheckTodayRecordDTO dto = new com.cy.client.weight.query.CheckTodayRecordDTO();
+        dto.setUserId(userId);
+        return weightRpcService.checkTodayRecord(dto);
+    }
+
     @ApiOperation("创建体重记录")
     @PostMapping("/create-record")
-    public ResultDTO<Long> createRecord(@RequestBody @Valid WeightRecordCreateDTO dto) {
+    public ResultDTO<Long> createRecord(@RequestBody @Valid WeightRecordCreateDTO dto, HttpServletRequest request) {
+        // 从拦截器设置的属性中获取userId
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId != null) {
+            dto.setUserId(userId);
+        }
         return weightRpcService.createRecord(dto);
     }
 

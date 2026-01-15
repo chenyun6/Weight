@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.Random;
+// import java.util.Random; // TODO: 接入短信服务后，恢复随机验证码生成时需要使用
 
 /**
  * 发送验证码-指令处理器
@@ -48,6 +48,7 @@ public class SendCodeCmdHandler {
         }
 
         // 生成验证码
+        // TODO: 后续接入短信服务时，需要修改为真实随机验证码生成
         String code = generateCode();
 
         // 保存验证码
@@ -60,14 +61,23 @@ public class SendCodeCmdHandler {
         verificationCode.setUsed(0);
         verificationCodeRepository.save(verificationCode);
 
-        // TODO 发送短信到手机号
+        // TODO: 后续接入短信服务时，需要调用短信服务发送验证码到手机号
         // 这里应该调用短信服务发送验证码
 
         return code;
     }
 
+    /**
+     * 生成验证码
+     * TODO: 后续接入短信服务时，需要修改为真实随机验证码生成
+     * 当前固定返回"111111"用于开发测试
+     */
     private String generateCode() {
-        Random random = new Random();
-        return String.format("%06d", random.nextInt(1000000));
+        // TODO: 接入短信服务后，改为随机生成验证码
+        // Random random = new Random();
+        // return String.format("%06d", random.nextInt(1000000));
+        
+        // 开发测试阶段，固定返回"111111"
+        return "111111";
     }
 }

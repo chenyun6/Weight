@@ -3,7 +3,7 @@ spring:
     name: weighty
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/weight?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://localhost:3306/weight?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
     password: 123456
     druid:
@@ -17,6 +17,7 @@ spring:
       test-while-idle: true
       test-on-borrow: false
       test-on-return: false
+      connection-properties: allowPublicKeyRetrieval=true
 
 mybatis-plus:
   mapper-locations: classpath:mapper/**/*.xml
@@ -32,3 +33,9 @@ logging:
   level:
     com.cy: debug
     root: info
+
+# JWT配置
+jwt:
+  secret: weighty-secret-key-for-jwt-token-generation-please-change-in-production-environment
+  expiration: 604800000  # 7天，单位：毫秒
+  refresh-expiration: 1209600000  # 14天，单位：毫秒

@@ -47,3 +47,20 @@ CREATE TABLE IF NOT EXISTS `sms_log` (
     KEY `idx_user_id` (`user_id`),
     KEY `idx_phone_time` (`phone`, `send_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='短信发送记录表';
+
+-- Token表（用于记录用户登录状态和最后使用时间）
+CREATE TABLE IF NOT EXISTS `user_token` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT 'ID',
+    `user_id` BIGINT NOT NULL COMMENT '用户ID',
+    `access_token` VARCHAR(500) NOT NULL COMMENT '访问Token',
+    `refresh_token` VARCHAR(500) NOT NULL COMMENT '刷新Token',
+    `expire_time` DATETIME NOT NULL COMMENT 'Token过期时间',
+    `last_used_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最后使用时间',
+    `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_access_token` (`access_token`(255)),
+    UNIQUE KEY `uk_refresh_token` (`refresh_token`(255)),
+    KEY `idx_user_id` (`user_id`),
+    KEY `idx_last_used_time` (`last_used_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='用户Token表';

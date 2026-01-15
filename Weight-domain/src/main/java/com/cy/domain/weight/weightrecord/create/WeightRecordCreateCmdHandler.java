@@ -34,7 +34,7 @@ public class WeightRecordCreateCmdHandler {
         // 检查今天是否已记录
         WeightRecord existingRecord = repository.findByUserIdAndDate(cmd.getUserId(), today);
         if (existingRecord != null) {
-            throw new RuntimeException("今天已经记录过了，每天只能记录一次");
+            throw new RuntimeException("今天已经记录过了，明天再来吧~");
         }
 
         // 创建记录
