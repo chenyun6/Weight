@@ -1,16 +1,17 @@
 package com.cy.adapter.weight.web;
 
 import com.common.tools.core.dto.ResultDTO;
+import com.cy.client.weight.WeightRpcService;
+import com.cy.client.weight.dto.LoginResponseDTO;
+import com.cy.client.weight.query.LoginDTO;
+import com.cy.client.weight.query.SendCodeDTO;
+import com.cy.client.weight.query.WeightRecordCreateDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.cy.client.weight.WeightRpcService;
-import com.cy.client.weight.query.SendCodeDTO;
-import com.cy.client.weight.query.LoginDTO;
-import com.cy.client.weight.query.WeightRecordCreateDTO;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +42,7 @@ public class WeightWebController {
 
     @ApiOperation("登录")
     @PostMapping("/login")
-    public ResultDTO<com.cy.client.weight.dto.LoginResponseDTO> login(@RequestBody @Valid LoginDTO dto, HttpServletRequest request) {
+    public ResultDTO<LoginResponseDTO> login(@RequestBody @Valid LoginDTO dto, HttpServletRequest request) {
         // 获取客户端IP
         String ip = getClientIp(request);
         dto.setIp(ip);
@@ -50,7 +51,7 @@ public class WeightWebController {
 
     @ApiOperation("刷新Token")
     @PostMapping("/refresh-token")
-    public ResultDTO<com.cy.client.weight.dto.LoginResponseDTO> refreshToken(@RequestBody @Valid com.cy.client.weight.query.RefreshTokenDTO dto) {
+    public ResultDTO<LoginResponseDTO> refreshToken(@RequestBody @Valid com.cy.client.weight.query.RefreshTokenDTO dto) {
         return weightRpcService.refreshToken(dto);
     }
 
