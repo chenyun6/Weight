@@ -3,6 +3,8 @@ package com.cy.adapter.weight.web;
 import com.common.tools.core.dto.ResultDTO;
 import com.cy.client.weight.WeightRpcService;
 import com.cy.client.weight.dto.LoginResponseDTO;
+import com.cy.client.weight.dto.WeightRecordDTO;
+import com.cy.client.weight.query.CheckTodayRecordDTO;
 import com.cy.client.weight.query.LoginDTO;
 import com.cy.client.weight.query.SendCodeDTO;
 import com.cy.client.weight.query.WeightRecordCreateDTO;
@@ -66,6 +68,19 @@ public class WeightWebController {
         com.cy.client.weight.query.CheckTodayRecordDTO dto = new com.cy.client.weight.query.CheckTodayRecordDTO();
         dto.setUserId(userId);
         return weightRpcService.checkTodayRecord(dto);
+    }
+
+    @ApiOperation("获取今天的记录详情")
+    @PostMapping("/get-today-record")
+    public ResultDTO<WeightRecordDTO> getTodayRecord(HttpServletRequest request) {
+        // 从拦截器设置的属性中获取userId
+        Long userId = (Long) request.getAttribute("userId");
+        if (userId == null) {
+            return ResultDTO.success(null);
+        }
+        CheckTodayRecordDTO dto = new CheckTodayRecordDTO();
+        dto.setUserId(userId);
+        return weightRpcService.getTodayRecord(dto);
     }
 
     @ApiOperation("创建体重记录")

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 登录-指令
+ * 支持短信验证码登录方式
  *
  * @author visual-ddd
  * @since 1.0

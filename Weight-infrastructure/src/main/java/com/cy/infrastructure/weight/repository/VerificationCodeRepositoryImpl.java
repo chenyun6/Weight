@@ -64,4 +64,18 @@ public class VerificationCodeRepositoryImpl implements VerificationCodeRepositor
     public Long countByIpAndTimeRange(String ip, LocalDateTime startTime, LocalDateTime endTime) {
         return verificationCodeMapper.countByIpAndTimeRange(ip, startTime, endTime);
     }
+
+    @Override
+    public VerificationCode findLatestByPhone(String phone) {
+        VerificationCodeDO codeDO = verificationCodeMapper.selectOne(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<VerificationCodeDO>()
+                        .eq(VerificationCodeDO::getPhone, phone)
+                        .orderByDesc(VerificationCodeDO::getSendTime)
+                        .last("LIMIT 1")
+        );
+        if (codeDO == null) {
+            return null;
+        }
+        return VerificationCode2VerificationCodeDOConvert.INSTANCE.do2Dto(codeDO);
+    }
 }

@@ -2,10 +2,8 @@ package com.cy.client.weight;
 
 import com.common.tools.core.dto.ResultDTO;
 import com.cy.client.weight.dto.LoginResponseDTO;
-import com.cy.client.weight.query.LoginDTO;
-import com.cy.client.weight.query.RefreshTokenDTO;
-import com.cy.client.weight.query.SendCodeDTO;
-import com.cy.client.weight.query.WeightRecordCreateDTO;
+import com.cy.client.weight.dto.WeightRecordDTO;
+import com.cy.client.weight.query.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -38,7 +36,11 @@ public interface WeightRpcService {
 
     @ApiOperation("检查今天是否已记录")
     @PostMapping("/check-today-record")
-    ResultDTO<Boolean> checkTodayRecord(@RequestBody @Valid com.cy.client.weight.query.CheckTodayRecordDTO dto);
+    ResultDTO<Boolean> checkTodayRecord(@RequestBody @Valid CheckTodayRecordDTO dto);
+
+    @ApiOperation("获取今天的记录详情")
+    @PostMapping("/get-today-record")
+    ResultDTO<WeightRecordDTO> getTodayRecord(@RequestBody @Valid CheckTodayRecordDTO dto);
 
     @ApiOperation("创建体重记录")
     @PostMapping("/create-record")

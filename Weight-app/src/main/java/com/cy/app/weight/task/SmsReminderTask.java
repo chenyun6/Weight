@@ -31,7 +31,7 @@ public class SmsReminderTask {
     /**
      * 每天凌晨2点执行
      */
-    @Scheduled(cron = "0 0 2 * * ?")
+    @Scheduled(cron = "0 0 10 * * ?")
     public void sendReminderSms() {
         log.info("开始执行短信提醒任务");
         LocalDate twoDaysAgo = LocalDate.now().minusDays(2);

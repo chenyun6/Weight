@@ -1,21 +1,26 @@
 package com.cy.domain.weight.user.sendcode;
 
-import com.cy.domain.weight.user.User;
+import com.cy.domain.weight.sms.SmsService;
 import com.cy.domain.weight.user.UserRepository;
 import com.cy.domain.weight.verificationcode.VerificationCode;
 import com.cy.domain.weight.verificationcode.VerificationCodeRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.time.Duration;
 import java.time.LocalDateTime;
-// import java.util.Random; // TODO: 接入短信服务后，恢复随机验证码生成时需要使用
+import java.util.Random;
 
 /**
  * 发送验证码-指令处理器
+ * 负责处理发送验证码的业务逻辑，包括防刷校验、验证码生成、短信发送等
  *
  * @author visual-ddd
  * @since 1.0
  */
+@Slf4j
 @Component
 public class SendCodeCmdHandler {
 
@@ -25,33 +30,159 @@ public class SendCodeCmdHandler {
     @Resource
     private VerificationCodeRepository verificationCodeRepository;
 
-    private static final int CODE_EXPIRE_MINUTES = 5;
-    private static final int MAX_SEND_COUNT_PER_HOUR = 5;
-    private static final int MAX_SEND_COUNT_PER_IP_PER_HOUR = 10;
+    @Resource
+    private SmsService smsService;
 
+    @Value("${sms.enabled:false}")
+    private boolean smsEnabled;
+
+    /** 验证码有效期（分钟） */
+    private static final int CODE_EXPIRE_MINUTES = 5;
+    
+    /** 短信未开启时使用的固定验证码 */
+    private static final String FIXED_CODE = "111111";
+    
+    /** 同一手机号1小时内最多发送次数 */
+    private static final int MAX_SEND_COUNT_PER_HOUR = 5;
+    
+    /** 同一IP1小时内最多发送次数 */
+    private static final int MAX_SEND_COUNT_PER_IP_PER_HOUR = 10;
+    
+    /** 最短发送间隔（秒） */
+    private static final int MIN_SEND_INTERVAL_SECONDS = 60;
+
+    /**
+     * 处理发送验证码指令
+     *
+     * @param cmd 发送验证码指令
+     * @return 生成的验证码
+     */
     public String handle(SendCodeCmd cmd) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime oneHourAgo = now.minusHours(1);
+        
+        // 防刷校验
+        validateAntiBrush(cmd, now);
+        
+        // 生成验证码
+        String code = generateVerificationCode(cmd.getPhone());
+        
+        // 保存验证码到本地数据库（用于兼容和测试模式）
+        saveVerificationCode(cmd, code, now);
+        
+        // 发送短信（如果开启）
+        sendSmsIfEnabled(cmd.getPhone(), code);
+        
+        return code;
+    }
 
-        // 防刷：检查手机号发送次数
-        Long phoneCount = verificationCodeRepository.countByPhoneAndTimeRange(cmd.getPhone(), oneHourAgo, now);
+    /**
+     * 防刷校验
+     * 检查发送频率限制，包括时间间隔、手机号限流、IP限流
+     *
+     * @param cmd 发送验证码指令
+     * @param now 当前时间
+     */
+    private void validateAntiBrush(SendCodeCmd cmd, LocalDateTime now) {
+        // 检查发送时间间隔
+        validateSendInterval(cmd.getPhone(), now);
+        
+        // 检查手机号发送次数
+        validatePhoneSendCount(cmd.getPhone(), now);
+        
+        // 检查IP发送次数
+        if (cmd.getIp() != null) {
+            validateIpSendCount(cmd.getIp(), now);
+        }
+    }
+
+    /**
+     * 校验发送时间间隔
+     * 同一手机号60秒内不能重复发送
+     *
+     * @param phone 手机号
+     * @param now   当前时间
+     */
+    private void validateSendInterval(String phone, LocalDateTime now) {
+        VerificationCode lastCode = verificationCodeRepository.findLatestByPhone(phone);
+        if (lastCode == null || lastCode.getSendTime() == null) {
+            return;
+        }
+        
+        LocalDateTime oneMinuteAgo = now.minusSeconds(MIN_SEND_INTERVAL_SECONDS);
+        if (lastCode.getSendTime().isAfter(oneMinuteAgo)) {
+            long remainingSeconds = MIN_SEND_INTERVAL_SECONDS - 
+                Duration.between(lastCode.getSendTime(), now).getSeconds();
+            throw new RuntimeException(String.format("发送过于频繁，请%d秒后再试", remainingSeconds));
+        }
+    }
+
+    /**
+     * 校验手机号发送次数
+     * 同一手机号1小时内最多发送5次
+     *
+     * @param phone 手机号
+     * @param now   当前时间
+     */
+    private void validatePhoneSendCount(String phone, LocalDateTime now) {
+        LocalDateTime oneHourAgo = now.minusHours(1);
+        Long phoneCount = verificationCodeRepository.countByPhoneAndTimeRange(phone, oneHourAgo, now);
         if (phoneCount >= MAX_SEND_COUNT_PER_HOUR) {
+            throw new RuntimeException("今日发送次数已达上限，请稍后再试");
+        }
+    }
+
+    /**
+     * 校验IP发送次数
+     * 同一IP1小时内最多发送10次
+     *
+     * @param ip  IP地址
+     * @param now 当前时间
+     */
+    private void validateIpSendCount(String ip, LocalDateTime now) {
+        LocalDateTime oneHourAgo = now.minusHours(1);
+        Long ipCount = verificationCodeRepository.countByIpAndTimeRange(ip, oneHourAgo, now);
+        if (ipCount >= MAX_SEND_COUNT_PER_IP_PER_HOUR) {
             throw new RuntimeException("发送过于频繁，请稍后再试");
         }
+    }
 
-        // 防刷：检查IP发送次数
-        if (cmd.getIp() != null) {
-            Long ipCount = verificationCodeRepository.countByIpAndTimeRange(cmd.getIp(), oneHourAgo, now);
-            if (ipCount >= MAX_SEND_COUNT_PER_IP_PER_HOUR) {
-                throw new RuntimeException("发送过于频繁，请稍后再试");
-            }
+    /**
+     * 生成验证码
+     * 根据短信开关决定使用随机验证码还是固定验证码
+     *
+     * @param phone 手机号
+     * @return 验证码
+     */
+    private String generateVerificationCode(String phone) {
+        if (smsEnabled) {
+            String code = generateRandomCode();
+            log.debug("生成随机验证码。手机号：{}", phone);
+            return code;
+        } else {
+            log.info("短信服务未开启，使用固定验证码。手机号：{}，验证码：{}", phone, FIXED_CODE);
+            return FIXED_CODE;
         }
+    }
 
-        // 生成验证码
-        // TODO: 后续接入短信服务时，需要修改为真实随机验证码生成
-        String code = generateCode();
+    /**
+     * 生成随机6位数字验证码
+     *
+     * @return 6位数字验证码
+     */
+    private String generateRandomCode() {
+        Random random = new Random();
+        int code = random.nextInt(900000) + 100000; // 生成100000-999999之间的6位数
+        return String.valueOf(code);
+    }
 
-        // 保存验证码
+    /**
+     * 保存验证码到数据库
+     *
+     * @param cmd  发送验证码指令
+     * @param code 验证码
+     * @param now  当前时间
+     */
+    private void saveVerificationCode(SendCodeCmd cmd, String code, LocalDateTime now) {
         VerificationCode verificationCode = new VerificationCode();
         verificationCode.setPhone(cmd.getPhone());
         verificationCode.setCode(code);
@@ -60,24 +191,27 @@ public class SendCodeCmdHandler {
         verificationCode.setIp(cmd.getIp());
         verificationCode.setUsed(0);
         verificationCodeRepository.save(verificationCode);
-
-        // TODO: 后续接入短信服务时，需要调用短信服务发送验证码到手机号
-        // 这里应该调用短信服务发送验证码
-
-        return code;
+        log.debug("验证码已保存。手机号：{}", cmd.getPhone());
     }
 
     /**
-     * 生成验证码
-     * TODO: 后续接入短信服务时，需要修改为真实随机验证码生成
-     * 当前固定返回"111111"用于开发测试
+     * 如果短信服务开启，则发送短信
+     *
+     * @param phone 手机号
+     * @param code  验证码
      */
-    private String generateCode() {
-        // TODO: 接入短信服务后，改为随机生成验证码
-        // Random random = new Random();
-        // return String.format("%06d", random.nextInt(1000000));
+    private void sendSmsIfEnabled(String phone, String code) {
+        if (!smsEnabled) {
+            return;
+        }
         
-        // 开发测试阶段，固定返回"111111"
-        return "111111";
+        boolean sendSuccess = smsService.sendVerificationCode(phone, code);
+        if (!sendSuccess) {
+            log.warn("短信发送失败，但验证码已保存。手机号：{}，验证码：{}", phone, code);
+            // 短信发送失败不影响验证码保存，用户可以通过其他方式获取验证码（如客服）
+        } else {
+            log.info("短信发送成功。手机号：{}", phone);
+        }
     }
+
 }

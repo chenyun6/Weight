@@ -1,18 +1,20 @@
 package com.cy.app.weight;
 
 import com.common.tools.core.dto.ResultDTO;
+import com.cy.app.weight.assembler.LoginDTO2LoginCmdConvert;
+import com.cy.app.weight.assembler.SendCodeDTO2SendCodeCmdConvert;
+import com.cy.app.weight.assembler.WeightRecordCreateDTO2WeightRecordCreateCmdConvert;
 import com.cy.app.weight.auth.AuthService;
 import com.cy.client.weight.WeightRpcService;
 import com.cy.client.weight.dto.LoginResponseDTO;
+import com.cy.client.weight.dto.WeightRecordDTO;
+import com.cy.client.weight.query.LoginDTO;
 import com.cy.client.weight.query.RefreshTokenDTO;
 import com.cy.client.weight.query.SendCodeDTO;
-import com.cy.client.weight.query.LoginDTO;
 import com.cy.client.weight.query.WeightRecordCreateDTO;
-import com.cy.app.weight.assembler.SendCodeDTO2SendCodeCmdConvert;
-import com.cy.app.weight.assembler.LoginDTO2LoginCmdConvert;
-import com.cy.app.weight.assembler.WeightRecordCreateDTO2WeightRecordCreateCmdConvert;
 import com.cy.domain.weight.user.login.LoginCmdHandler;
 import com.cy.domain.weight.user.sendcode.SendCodeCmdHandler;
+import com.cy.domain.weight.weightrecord.WeightRecord;
 import com.cy.domain.weight.weightrecord.WeightRecordRepository;
 import com.cy.domain.weight.weightrecord.create.WeightRecordCreateCmdHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -67,9 +69,26 @@ public class WeightRpcServiceImpl implements WeightRpcService {
 
     @Override
     public ResultDTO<Boolean> checkTodayRecord(com.cy.client.weight.query.CheckTodayRecordDTO dto) {
-        java.time.LocalDate today = java.time.LocalDate.now();
-        com.cy.domain.weight.weightrecord.WeightRecord existing = weightRecordRepository.findByUserIdAndDate(dto.getUserId(), today);
+        LocalDate today = LocalDate.now();
+        WeightRecord existing = weightRecordRepository.findByUserIdAndDate(dto.getUserId(), today);
         return ResultDTO.success(existing != null);
+    }
+    
+    @Override
+    public ResultDTO<com.cy.client.weight.dto.WeightRecordDTO> getTodayRecord(com.cy.client.weight.query.CheckTodayRecordDTO dto) {
+        LocalDate today = LocalDate.now();
+        WeightRecord existing = weightRecordRepository.findByUserIdAndDate(dto.getUserId(), today);
+        if (existing == null) {
+            return ResultDTO.success(null);
+        }
+        // 转换为DTO
+        WeightRecordDTO dtoResult = new WeightRecordDTO();
+        dtoResult.setId(existing.getId());
+        dtoResult.setUserId(existing.getUserId());
+        dtoResult.setWeightType(existing.getWeightType() != null ? existing.getWeightType().getValue() : null);
+        dtoResult.setRecordDate(existing.getRecordDate());
+        dtoResult.setCreateTime(existing.getCreateTime());
+        return ResultDTO.success(dtoResult);
     }
 
     @Override

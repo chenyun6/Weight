@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS `weight_record` (
     `weight_type` TINYINT NOT NULL COMMENT '体重类型 1-胖了 2-瘦了',
     `record_date` DATE NOT NULL COMMENT '记录日期',
     `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `update_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_user_date` (`user_id`, `record_date`),
     KEY `idx_user_id` (`user_id`),

@@ -1,7 +1,6 @@
 package com.cy.infrastructure.weight.repository.model;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.cy.infrastructure.BaseDO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
