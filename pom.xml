@@ -6,7 +6,6 @@
     <groupId>com.education</groupId>
     <artifactId>education-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <relativePath>../education-parent/pom.xml</relativePath>
   </parent>
 
   <groupId>com.weight</groupId>

@@ -277,7 +277,7 @@ com.cy.start/
 ## API 接口
 
 ### 1. 发送验证码
-**接口**：`POST /web/weight/send-code`
+**接口**：`POST /app/weight/send-code`
 
 **请求参数**：
 ```json
@@ -297,7 +297,7 @@ com.cy.start/
 ```
 
 ### 2. 登录
-**接口**：`POST /web/weight/login`
+**接口**：`POST /app/weight/login`
 
 **请求参数**：
 ```json
@@ -323,7 +323,7 @@ com.cy.start/
 ```
 
 ### 3. 刷新 Token
-**接口**：`POST /web/weight/refresh-token`
+**接口**：`POST /app/weight/refresh-token`
 
 **请求参数**：
 ```json
@@ -333,7 +333,7 @@ com.cy.start/
 ```
 
 ### 4. 检查今天是否已记录
-**接口**：`POST /web/weight/check-today-record`
+**接口**：`POST /app/weight/check-today-record`
 
 **请求头**：
 ```
@@ -351,7 +351,7 @@ Authorization: Bearer {accessToken}
 ```
 
 ### 5. 获取今天的记录详情
-**接口**：`POST /web/weight/get-today-record`
+**接口**：`POST /app/weight/get-today-record`
 
 **请求头**：
 ```
@@ -375,7 +375,7 @@ Authorization: Bearer {accessToken}
 ```
 
 ### 6. 创建体重记录
-**接口**：`POST /web/weight/create-record`
+**接口**：`POST /app/weight/create-record`
 
 **请求头**：
 ```

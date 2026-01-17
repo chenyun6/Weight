@@ -1,5 +1,6 @@
 package com.cy.app.weight.auth;
 
+import com.common.tools.core.exception.BizException;
 import com.cy.client.weight.dto.LoginResponseDTO;
 import com.cy.domain.weight.user.User;
 import com.cy.domain.weight.user.UserRepository;
@@ -36,7 +37,7 @@ public class AuthService {
     public LoginResponseDTO generateToken(Long userId) {
         User user = userRepository.find(userId);
         if (user == null) {
-            throw new RuntimeException("用户不存在");
+            throw new BizException("用户不存在");
         }
 
         // 生成Token
@@ -72,13 +73,13 @@ public class AuthService {
     public LoginResponseDTO refreshToken(String refreshToken) {
         // 验证RefreshToken
         if (!tokenService.validateToken(refreshToken) || !tokenService.isRefreshToken(refreshToken)) {
-            throw new RuntimeException("无效的RefreshToken");
+            throw new BizException("无效的RefreshToken");
         }
 
         // 从数据库查询Token
         UserTokenDO tokenDO = userTokenRepository.findByRefreshToken(refreshToken);
         if (tokenDO == null) {
-            throw new RuntimeException("Token不存在");
+            throw new BizException("Token不存在");
         }
 
         // 检查是否7天未使用
@@ -86,7 +87,7 @@ public class AuthService {
         if (tokenDO.getLastUsedTime().isBefore(sevenDaysAgo)) {
             // 删除过期Token
             userTokenRepository.deleteByUserId(tokenDO.getUserId());
-            throw new RuntimeException("Token已过期，请重新登录");
+            throw new BizException("Token已过期，请重新登录");
         }
 
         // 生成新Token

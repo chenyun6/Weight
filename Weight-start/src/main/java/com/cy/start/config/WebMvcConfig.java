@@ -22,7 +22,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
-                .addPathPatterns("/web/weight/**")
-                .excludePathPatterns("/web/weight/send-code", "/web/weight/login", "/web/weight/refresh-token");
+                .addPathPatterns("/app/weight/**")
+                .excludePathPatterns("/app/weight/send-code", "/app/weight/login", "/app/weight/refresh-token");
     }
 }

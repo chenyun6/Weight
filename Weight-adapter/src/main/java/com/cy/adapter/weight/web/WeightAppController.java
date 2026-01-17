@@ -26,9 +26,11 @@ import javax.validation.Valid;
  * @since 1.0
  */
 @RestController
-@RequestMapping("/web/weight")
-@Api(value = "/web/weight", tags = "[WEB] Weighty-体重管理")
-public class WeightWebController {
+@RequestMapping("/app/weight")
+@Api(value = "/app/weight", tags = "[WEB] Weighty-体重管理")
+public class WeightAppController {
+
+    private static final String USER_ID = "userId";
 
     @Resource
     private WeightRpcService weightRpcService;
@@ -61,7 +63,7 @@ public class WeightWebController {
     @PostMapping("/check-today-record")
     public ResultDTO<Boolean> checkTodayRecord(HttpServletRequest request) {
         // 从拦截器设置的属性中获取userId
-        Long userId = (Long) request.getAttribute("userId");
+        Long userId = (Long) request.getAttribute(USER_ID);
         if (userId == null) {
             return ResultDTO.success(false);
         }
@@ -74,7 +76,7 @@ public class WeightWebController {
     @PostMapping("/get-today-record")
     public ResultDTO<WeightRecordDTO> getTodayRecord(HttpServletRequest request) {
         // 从拦截器设置的属性中获取userId
-        Long userId = (Long) request.getAttribute("userId");
+        Long userId = (Long) request.getAttribute(USER_ID);
         if (userId == null) {
             return ResultDTO.success(null);
         }
@@ -87,7 +89,7 @@ public class WeightWebController {
     @PostMapping("/create-record")
     public ResultDTO<Long> createRecord(@RequestBody @Valid WeightRecordCreateDTO dto, HttpServletRequest request) {
         // 从拦截器设置的属性中获取userId
-        Long userId = (Long) request.getAttribute("userId");
+        Long userId = (Long) request.getAttribute(USER_ID);
         if (userId != null) {
             dto.setUserId(userId);
         }
