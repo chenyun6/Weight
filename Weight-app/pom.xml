@@ -21,10 +21,6 @@
       <artifactId>Weight-domain</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.weight</groupId>
-      <artifactId>Weight-infrastructure</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
     </dependency>

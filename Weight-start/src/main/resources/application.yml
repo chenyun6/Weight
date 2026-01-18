@@ -3,9 +3,9 @@ spring:
     name: weighty
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://82.157.47.13:3306/weight?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-    username: app
-    password: App@123456
+    url: jdbc:mysql://localhost:3306/weight?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
     druid:
       initial-size: 5
       min-idle: 5
@@ -21,7 +21,7 @@ spring:
 
 mybatis-plus:
   mapper-locations: classpath:mapper/**/*.xml
-  type-aliases-package: com.cy.infrastructure.weight.repository.model
+  type-aliases-package: com.sanzhong.infrastructure.weight.repository.model
   configuration:
     map-underscore-to-camel-case: true
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -31,7 +31,7 @@ server:
 
 logging:
   level:
-    com.cy: debug
+    com.sanzhong: debug
     root: info
 
 # JWT配置
@@ -39,3 +39,14 @@ jwt:
   secret: weighty-secret-key-for-jwt-token-generation-please-change-in-production-environment
   expiration: 604800000  # 7天，单位：毫秒
   refresh-expiration: 1209600000  # 14天，单位：毫秒
+
+# 阿里云短信配置（仅在sms.enabled=true时生效）
+# 使用号码认证服务的SendSmsVerifyCode和CheckSmsVerifyCode接口
+aliyun:
+  sms:
+    access-key-id:  # 请替换为实际的AccessKeyId
+    access-key-secret:  # 请替换为实际的AccessKeySecret
+    scheme-name:   # 号码认证方案名称（需要在阿里云控制台申请号码认证方案）
+    sign-name:  # 短信签名名称（需要在阿里云控制台申请，推荐使用号码认证服务赠送的签名）
+    template-code:  # 短信模板Code（需要在阿里云控制台申请，推荐使用号码认证服务赠送的模板）
+    endpoint: dypnsapi.aliyuncs.com  # 阿里云号码认证服务端点

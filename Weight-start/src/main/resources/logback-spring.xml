@@ -71,7 +71,7 @@
             <appender-ref ref="ASYNC_FILE_ALL"/>
             <appender-ref ref="ASYNC_FILE_ERROR"/>
         </root>
-        <logger name="com.cy" level="DEBUG"/>
+        <logger name="com.sanzhong" level="DEBUG"/>
     </springProfile>
     
     <!-- 生产环境：仅文件 -->
@@ -80,7 +80,7 @@
             <appender-ref ref="ASYNC_FILE_ALL"/>
             <appender-ref ref="ASYNC_FILE_ERROR"/>
         </root>
-        <logger name="com.cy" level="INFO"/>
+        <logger name="com.sanzhong" level="INFO"/>
     </springProfile>
     
     <!-- 默认环境：控制台 + 文件 -->
@@ -90,7 +90,7 @@
             <appender-ref ref="ASYNC_FILE_ALL"/>
             <appender-ref ref="ASYNC_FILE_ERROR"/>
         </root>
-        <logger name="com.cy" level="DEBUG"/>
+        <logger name="com.sanzhong" level="DEBUG"/>
     </springProfile>
     
     <!-- 第三方框架日志级别控制 -->

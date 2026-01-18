@@ -41,7 +41,7 @@ Weight/
 
 **目录结构**：
 ```
-com.cy.domain.weight/
+com.sanzhong.domain.weight/
 ├── user/                    # 用户聚合
 │   ├── User.java           # 用户实体（聚合根）
 │   ├── UserRepository.java # 用户仓储接口
@@ -77,7 +77,7 @@ com.cy.domain.weight/
 
 **目录结构**：
 ```
-com.cy.app.weight/
+com.sanzhong.app.weight/
 ├── WeightRpcServiceImpl.java      # RPC 服务实现
 ├── auth/                          # 认证服务
 │   └── AuthService.java
@@ -101,7 +101,7 @@ com.cy.app.weight/
 
 **目录结构**：
 ```
-com.cy.client.weight/
+com.sanzhong.client.weight/
 ├── WeightRpcService.java          # RPC 接口定义
 ├── dto/                           # 数据传输对象
 │   ├── LoginResponseDTO.java
@@ -124,7 +124,7 @@ com.cy.client.weight/
 
 **目录结构**：
 ```
-com.cy.adapter.weight.web/
+com.sanzhong.adapter.weight.web/
 ├── WeightWebController.java       # Web Controller
 ├── GlobalExceptionHandler.java    # 全局异常处理
 └── AuthInterceptor.java           # 认证拦截器
@@ -140,7 +140,7 @@ com.cy.adapter.weight.web/
 
 **目录结构**：
 ```
-com.cy.infrastructure.weight/
+com.sanzhong.infrastructure.weight/
 ├── repository/                    # 仓储实现
 │   ├── UserRepositoryImpl.java
 │   ├── WeightRecordRepositoryImpl.java
@@ -173,11 +173,41 @@ com.cy.infrastructure.weight/
 
 **目录结构**：
 ```
-com.cy.start/
+com.sanzhong.start/
 ├── WeightApplication.java         # Spring Boot 启动类
 └── resources/
     └── application.yml            # 应用配置文件
 ```
+
+## 模块依赖关系
+
+本项目严格遵循 **DDD 依赖倒置原则**，依赖关系如下：
+
+### 依赖关系图
+
+```
+Weight-start (启动模块)
+    ├── Weight-adapter (适配器层)
+    │       └── Weight-app (应用层)
+    │               ├── Weight-domain (领域层) ──── Weight-common (通用模块)
+    │               └── Weight-client (客户端层)
+    │
+    └── Weight-infrastructure (基础设施层)
+            ├── Weight-domain (领域层) ──── Weight-common (通用模块)
+            └── Weight-client (客户端层)
+```
+
+### DDD 依赖规范
+
+1. **Weight-common**：不依赖任何业务模块，只包含常量、枚举、异常码
+2. **Weight-domain**：只依赖 `Weight-common`，定义领域接口，不依赖技术实现
+3. **Weight-client**：不依赖任何业务模块，只包含接口定义和 DTO
+4. **Weight-app**：依赖 `Weight-domain`、`Weight-client`、`Weight-common`，通过领域层接口使用能力
+5. **Weight-infrastructure**：依赖 `Weight-domain`、`Weight-client`、`Weight-common`，实现领域层接口
+6. **Weight-adapter**：依赖 `Weight-app`，负责 HTTP 协议适配
+7. **Weight-start**：依赖 `Weight-adapter`、`Weight-infrastructure`，启动模块需要加载所有 Bean
+
+> 📖 详细的依赖关系说明请参考 [README-DEPENDENCIES.md](./README-DEPENDENCIES.md)
 
 ## 功能特性
 
@@ -422,6 +452,7 @@ Authorization: Bearer {accessToken}
 
 ### 第三方服务
 - **阿里云短信服务（Dysmsapi）**：短信发送服务
+- **阿里云号码认证服务（Dypnsapi）**：验证码发送和核验服务
 
 ### 开发工具
 - **Maven**：项目构建工具
@@ -526,7 +557,7 @@ java -jar target/Weight-start-1.0-SNAPSHOT.jar
    - 类名：大驼峰（PascalCase），如 `SendCodeCmdHandler`
    - 方法名/变量名：小驼峰（camelCase），如 `sendCode`
    - 常量：全大写+下划线，如 `MAX_SEND_COUNT_PER_HOUR`
-   - 包名：全小写，如 `com.cy.domain.weight`
+   - 包名：全小写，如 `com.sanzhong.domain.weight`
 
 2. **注释规范**：
    - 类注释：说明类的职责
@@ -564,18 +595,20 @@ java -jar target/Weight-start-1.0-SNAPSHOT.jar
 
 ```
 Weight/
+├── Weight-common/              # 通用模块
+│   └── src/main/java/com/sanzhong/common/weight/
 ├── Weight-domain/              # 领域层
-│   └── src/main/java/com/cy/domain/weight/
+│   └── src/main/java/com/sanzhong/domain/weight/
 ├── Weight-app/                 # 应用层
-│   └── src/main/java/com/cy/app/weight/
+│   └── src/main/java/com/sanzhong/app/weight/
 ├── Weight-client/              # 客户端层
-│   └── src/main/java/com/cy/client/weight/
+│   └── src/main/java/com/sanzhong/client/weight/
 ├── Weight-adapter/             # 适配器层
-│   └── src/main/java/com/cy/adapter/weight/
+│   └── src/main/java/com/sanzhong/adapter/weight/
 ├── Weight-infrastructure/      # 基础设施层
-│   └── src/main/java/com/cy/infrastructure/weight/
+│   └── src/main/java/com/sanzhong/infrastructure/weight/
 ├── Weight-start/               # 启动模块
-│   └── src/main/java/com/cy/start/
+│   └── src/main/java/com/sanzhong/start/
 ├── db/                         # 数据库脚本
 │   └── schema.sql
 ├── pom.xml                     # 父 POM
