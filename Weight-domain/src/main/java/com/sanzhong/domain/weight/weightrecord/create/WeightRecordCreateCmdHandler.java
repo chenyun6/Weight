@@ -1,7 +1,7 @@
 package com.sanzhong.domain.weight.weightrecord.create;
 
 import com.common.tools.core.exception.BizException;
-import com.sanzhong.common.weight.resultcode.WeightResultCode;
+import com.common.tools.core.resultcode.WeightResultCode;
 import com.sanzhong.domain.weight.weightrecord.WeightRecord;
 import com.sanzhong.domain.weight.weightrecord.WeightRecordFactory;
 import com.sanzhong.domain.weight.weightrecord.WeightRecordRepository;

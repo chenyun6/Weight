@@ -1,9 +1,9 @@
 package com.sanzhong.domain.weight.user.sendcode;
 
 import com.common.tools.core.exception.BizException;
+import com.common.tools.core.resultcode.WeightResultCode;
 import com.sanzhong.common.weight.constants.CodeConstants;
 import com.sanzhong.common.weight.enums.CodeStatus;
-import com.sanzhong.common.weight.resultcode.WeightResultCode;
 import com.sanzhong.domain.weight.sms.SmsService;
 import com.sanzhong.domain.weight.user.UserRepository;
 import com.sanzhong.domain.weight.verificationcode.VerificationCode;
@@ -97,7 +97,7 @@ public class SendCodeCmdHandler {
         if (lastCode.getSendTime().isAfter(oneMinuteAgo)) {
             long remainingSeconds = CodeConstants.MIN_SEND_INTERVAL_SECONDS - 
                 Duration.between(lastCode.getSendTime(), now).getSeconds();
-            throw new BizException(WeightResultCode.SEND_CODE_TOO_FREQUENT, 
+            throw new BizException(WeightResultCode.SEND_CODE_TOO_FREQUENT,
                 String.format(WeightResultCode.SEND_CODE_TOO_FREQUENT.getMsg(), remainingSeconds));
         }
     }
