@@ -18,6 +18,9 @@ public class User {
     /** 手机号 */
     private String phone;
 
+    /** 登录密码（加密存储） */
+    private String password;
+
     /** 创建时间 */
     private LocalDateTime createTime;
 

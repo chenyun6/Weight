@@ -26,4 +26,19 @@ public interface UserRepository extends BaseRepository<User, Long> {
      * @return 用户列表
      */
     List<User> findAll();
+
+    /**
+     * 更新用户密码
+     *
+     * @param user 用户（包含新密码）
+     * @return 更新后的用户
+     */
+    User updatePassword(User user);
+
+    /**
+     * 删除用户及其所有关联数据
+     *
+     * @param userId 用户ID
+     */
+    void deleteUserWithRelations(Long userId);
 }

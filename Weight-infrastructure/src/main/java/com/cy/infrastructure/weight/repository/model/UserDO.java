@@ -17,4 +17,7 @@ public class UserDO extends BaseDO {
 
     /** 手机号 */
     private String phone;
+
+    /** 登录密码（加密存储） */
+    private String password;
 }

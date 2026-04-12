@@ -34,4 +34,14 @@ public interface VerificationCodeRepository {
      * 查找指定手机号最近一次发送的验证码
      */
     VerificationCode findLatestByPhone(String phone);
+
+    /**
+     * 删除指定手机号的所有验证码（账号注销时清理）
+     */
+    void deleteByPhone(String phone);
+
+    /**
+     * 标记验证码为已使用
+     */
+    void markAsUsed(Long id);
 }

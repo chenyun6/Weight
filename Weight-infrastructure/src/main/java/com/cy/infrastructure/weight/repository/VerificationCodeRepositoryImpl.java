@@ -78,4 +78,21 @@ public class VerificationCodeRepositoryImpl implements VerificationCodeRepositor
         }
         return VerificationCode2VerificationCodeDOConvert.INSTANCE.do2Dto(codeDO);
     }
+
+    @Override
+    public void deleteByPhone(String phone) {
+        verificationCodeMapper.delete(
+                new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<VerificationCodeDO>()
+                        .eq(VerificationCodeDO::getPhone, phone)
+        );
+    }
+
+    @Override
+    public void markAsUsed(Long id) {
+        VerificationCodeDO codeDO = verificationCodeMapper.selectById(id);
+        if (codeDO != null) {
+            codeDO.setUsed(1);
+            verificationCodeMapper.updateById(codeDO);
+        }
+    }
 }

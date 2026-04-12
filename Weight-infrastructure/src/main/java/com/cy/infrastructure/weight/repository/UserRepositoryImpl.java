@@ -76,4 +76,18 @@ public class UserRepositoryImpl implements UserRepository {
         List<UserDO> userDOList = userMapper.selectList(null);
         return User2UserDOConvert.INSTANCE.doList2DtoList(userDOList);
     }
+
+    @Override
+    public User updatePassword(User user) {
+        UserDO userDO = userMapper.selectById(user.getId());
+        Assert.notNull(userDO, "用户不存在");
+        userDO.setPassword(user.getPassword());
+        userMapper.updateById(userDO);
+        return User2UserDOConvert.INSTANCE.do2Dto(userDO);
+    }
+
+    @Override
+    public void deleteUserWithRelations(Long userId) {
+        userMapper.deleteById(userId);
+    }
 }
