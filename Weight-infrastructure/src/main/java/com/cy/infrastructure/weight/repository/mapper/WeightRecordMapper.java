@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * WeightRecordMapper接口
@@ -25,4 +26,12 @@ public interface WeightRecordMapper extends BaseMapper<WeightRecordDO> {
      * 查询用户最后一次记录日期
      */
     LocalDate findLastRecordDate(@Param("userId") Long userId);
+
+    /**
+     * 根据用户ID和日期范围查询记录列表
+     */
+    List<WeightRecordDO> findListByUserIdAndDateRange(
+            @Param("userId") Long userId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 }

@@ -21,6 +21,8 @@ public interface WeightRecord2WeightRecordDOConvert {
 
     WeightRecord do2Dto(WeightRecordDO weightRecordDO);
 
+    java.util.List<WeightRecord> doList2DtoList(java.util.List<WeightRecordDO> weightRecordDOList);
+
     /**
      * MapStruct: WeightType -> Integer
      */

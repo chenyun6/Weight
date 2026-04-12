@@ -45,4 +45,32 @@ public interface WeightRpcService {
     @ApiOperation("创建体重记录")
     @PostMapping("/create-record")
     ResultDTO<Long> createRecord(@RequestBody @Valid WeightRecordCreateDTO dto);
+
+    @ApiOperation("获取用户信息")
+    @PostMapping("/user/profile")
+    ResultDTO<com.cy.client.weight.query.UserProfileDTO> getUserProfile(@RequestBody @Valid com.cy.client.weight.query.CheckTodayRecordDTO dto);
+
+    @ApiOperation("新增体重记录")
+    @PostMapping("/weight/add")
+    ResultDTO<com.cy.client.weight.dto.WeightRecordDTO> addWeightRecord(@RequestBody @Valid com.cy.client.weight.query.WeightAddDTO dto);
+
+    @ApiOperation("体重记录列表")
+    @PostMapping("/weight/list")
+    ResultDTO<com.cy.client.weight.query.WeightRecordListResultDTO> getWeightRecordList(@RequestBody @Valid com.cy.client.weight.query.WeightRecordListQuery query);
+
+    @ApiOperation("密码登录")
+    @PostMapping("/login/password")
+    ResultDTO<LoginResponseDTO> loginWithPassword(@RequestBody @Valid com.cy.client.weight.query.PasswordLoginDTO dto);
+
+    @ApiOperation("设置密码")
+    @PostMapping("/account/set-password")
+    ResultDTO<Void> setPassword(@RequestBody @Valid com.cy.client.weight.query.SetPasswordDTO dto);
+
+    @ApiOperation("修改密码")
+    @PostMapping("/account/change-password")
+    ResultDTO<Void> changePassword(@RequestBody @Valid com.cy.client.weight.query.ChangePasswordDTO dto);
+
+    @ApiOperation("删除账号")
+    @PostMapping("/account/delete")
+    ResultDTO<Void> deleteAccount(@RequestBody @Valid com.cy.client.weight.query.DeleteAccountDTO dto);
 }

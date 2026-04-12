@@ -12,6 +12,7 @@ import com.cy.infrastructure.weight.repository.mapper.WeightRecordMapper;
 import com.cy.infrastructure.weight.assembler.WeightRecord2WeightRecordDOConvert;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -71,5 +72,17 @@ public class WeightRecordRepositoryImpl implements WeightRecordRepository {
     @Override
     public LocalDate findLastRecordDate(Long userId) {
         return weightRecordMapper.findLastRecordDate(userId);
+    }
+
+    @Override
+    public List<WeightRecord> findListByUserIdAndDateRange(Long userId, LocalDate startDate, LocalDate endDate) {
+        List<WeightRecordDO> recordDOList = weightRecordMapper.findListByUserIdAndDateRange(userId, startDate, endDate);
+        return WeightRecord2WeightRecordDOConvert.INSTANCE.doList2DtoList(recordDOList);
+    }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        weightRecordMapper.delete(new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<WeightRecordDO>()
+                .eq(WeightRecordDO::getUserId, userId));
     }
 }

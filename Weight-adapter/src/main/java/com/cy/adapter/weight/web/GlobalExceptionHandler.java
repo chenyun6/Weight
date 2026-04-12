@@ -55,7 +55,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BizException.class)
     public ResultDTO<?> bizExceptionHandler(HttpServletRequest request, BizException ex) {
         log.warn("business error, request={}, code={}, message={}", request.getRequestURI(), ex.getCode(), ex.getMessage());
-        return ResultDTO.fail(ex.getCode(), request, ex.getMessage());
+        return ResultDTO.fail(ex.getCode(), ex.getMessage());
     }
 
     /**
