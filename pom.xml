@@ -28,10 +28,17 @@
     <common-tools.version>1.0-SNAPSHOT</common-tools.version>
     <javax.annotation-api.version>1.3.2</javax.annotation-api.version>
     <spring.boot.version>2.3.2.RELEASE</spring.boot.version>
+    <lombok.version>1.18.34</lombok.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <!-- 覆盖Spring Boot管理的lombok版本，兼容JDK 21+ -->
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>${lombok.version}</version>
+      </dependency>
       <!--Project modules-->
       <dependency>
         <groupId>com.weight</groupId>
